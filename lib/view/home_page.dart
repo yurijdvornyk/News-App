@@ -43,14 +43,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("Global News app"),
       ),
-      //backgroundColor: Colors.white,
       body: _content[_currentPageIndex].page,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPageIndex,
         items: _getNavigationItems(),
         onTap: onTabTapped,
-        //unselectedItemColor: Colors.grey,
-        //selectedItemColor: Colors.black,
       ),
     );
   }

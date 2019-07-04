@@ -21,7 +21,6 @@ class _ArticlePageState extends State<ArticlePage> {
 
   @override
   Widget build(BuildContext context) {
-    print('aaa');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -30,7 +29,6 @@ class _ArticlePageState extends State<ArticlePage> {
           overflow: TextOverflow.ellipsis
         ),
       ),
-      backgroundColor: Colors.white,
       body: ListView(
         children: [
           _createHeaderWidget(),

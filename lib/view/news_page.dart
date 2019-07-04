@@ -78,7 +78,7 @@ class _NewsPageState extends State<NewsPage> {
             },
           ));
     }
-    return Scaffold(backgroundColor: Colors.white, body: body);
+    return Scaffold(body: body);
   }
 
   Widget _createArticleTile(Object object) {
