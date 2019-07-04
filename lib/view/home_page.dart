@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'news_page.dart';
-import 'saved_page.dart';
 import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {

@@ -71,8 +71,7 @@ class _NewsPageState extends State<NewsPage> {
           key: _refreshIndicatorKey,
           onRefresh: () => Future<Null>(loadNews),
           child: ListView.separated(
-            separatorBuilder: (context, index) =>
-                Divider(color: Colors.black, height: 0),
+            separatorBuilder: (context, index) => Divider(height: 0),
             itemCount: _content == null ? 0 : _content.length,
             itemBuilder: (BuildContext context, int index) {
               return _createArticleTile(_content[index]);

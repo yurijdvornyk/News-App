@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../app-bloc.dart';
+
 class SettingsHelper {
   static final SettingsHelper instance = SettingsHelper._privateConstructor();
 
@@ -23,6 +25,10 @@ class SettingsHelper {
   Future<bool> shouldUseDarkTheme(bool shouldUse) async =>
       await SharedPreferences.getInstance()
           .then((preferences) => preferences.setBool(KEY_USE_DARK_THEME, shouldUse))
+          .then((value) { 
+            appBloc.changeTheme(shouldUse);
+            return true;
+          })
           .then((success) => shouldUse);
 
   Future<String> get country async => await SharedPreferences.getInstance()
