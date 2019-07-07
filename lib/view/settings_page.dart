@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:global_news_app/data/settings_helper.dart';
-import '../app-bloc.dart';
 import 'progress_view.dart';
 import 'package:numberpicker/numberpicker.dart';
 

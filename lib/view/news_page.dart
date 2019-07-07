@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:global_news_app/data/api_helper.dart';
-import 'package:global_news_app/data/database_helper.dart';
+import 'package:global_news_app/blocs/article_bloc.dart';
+import 'package:global_news_app/blocs/news_bloc.dart';
 import 'package:global_news_app/entity/article.dart';
-import 'package:http/http.dart' as http;
-import 'progress_view.dart';
 import 'article_page.dart';
 
 class NewsPage extends StatefulWidget {
@@ -16,116 +13,86 @@ class NewsPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _NewsPageState createState() => _NewsPageState();
+  State<StatefulWidget> createState() => NewsPageState();
 }
 
-class _NewsPageState extends State<NewsPage> {
-  List<Article> _articles;
-  List<Object> _content;
-
+class NewsPageState extends State<NewsPage> {
+  final _newsBloc = NewsBloc();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
-    loadNews();
-  }
-
-  void _showArticle(article) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ArticlePage(article: article)),
-    );
-  }
-
-  void _toggleSaveState(article) {
-    DatabaseHelper.instance
-        .toggleSave(article)
-        .then((_) => DatabaseHelper.instance.getArticles())
-        .then((articles) {
-      setState(() {
-        _setContent(articles);
-      });
-    });
-  }
-
-  void _setContent(List<Article> articles) {
-    _articles = articles;
-    _content = [];
-    for (var i = 0; i < _articles.length; i++) {
-      if (i == 0 || _articles[i].date != _articles[i - 1].date) {
-        _content.add(articles[i].date);
-      }
-      _content.add(articles[i]);
-    }
+    reload();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
-    if (_content == null || _content.isEmpty) {
-      body = progressIndicator;
-    } else {
-      body = RefreshIndicator(
-          key: _refreshIndicatorKey,
-          onRefresh: () => Future<Null>(loadNews),
-          child: ListView.separated(
-            separatorBuilder: (context, index) => Divider(height: 0),
-            itemCount: _content == null ? 0 : _content.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _createArticleTile(_content[index]);
-            },
-          ));
-    }
-    return Scaffold(body: body);
+    return Scaffold(
+        body: StreamBuilder(
+            initialData: null,
+            stream: _newsBloc.articlesStream,
+            builder: (context, AsyncSnapshot<List<Article>> snapshot) {
+              if (snapshot.hasData) {
+                return RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: () => reload(),
+                    child: snapshot.data.length == 0
+                        ? Center(child: Text("No content"))
+                        : ListView.separated(
+                            separatorBuilder: (context, index) =>
+                                Divider(height: 0),
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return _createArticleTile(
+                                  context, snapshot.data[index]);
+                            },
+                          ));
+              } else if (snapshot.hasError) {
+                return Text(snapshot.error.toString());
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }));
   }
 
-  Widget _createArticleTile(Object object) {
-    if (object is Article) {
-      var article = object;
+  reload() => _newsBloc.loadNews(onlySaved: widget.showOnlySaved);
+
+  Widget _createArticleTile(context, item) {
+    if (item is Article) {
       var firstRow =
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(article.time, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(article.source)
+        Text(item.time, style: TextStyle(fontWeight: FontWeight.bold)),
+        Text(item.source)
       ]);
 
       firstRow.children.add(GestureDetector(
-          child: article.isSaved
-              ? Icon(Icons.bookmark)
-              : Icon(Icons.bookmark_border),
-          onTap: () => _toggleSaveState(article)));
+          child:
+              item.isSaved ? Icon(Icons.bookmark) : Icon(Icons.bookmark_border),
+          onTap: () => articleBloc.toggleSaveState(item)));
 
       var secondRow =
-          Text(article.title, maxLines: 1, overflow: TextOverflow.ellipsis);
+          Text(item.title, maxLines: 1, overflow: TextOverflow.ellipsis);
 
       return ListTile(
         title: firstRow,
         subtitle: secondRow,
-        onTap: () => _showArticle(article),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ArticlePage(article: item)),
+          );
+        },
       );
-    } else if (object is String) {
-      return ListTile(
-          title: Text(
-        object,
-        textAlign: TextAlign.center,
-      ));
+    } else if (item is String) {
+      return ListTile(title: Text(item, textAlign: TextAlign.center));
     }
   }
 
-  Future<Null> loadNews() async {
-    List<Article> articles;
-    if (widget.showOnlySaved) {
-      articles = await DatabaseHelper.instance.getArticles().then(
-          (articles) => articles.where((article) => article.isSaved).toList());
-    } else {
-      articles = await ApiHelper.instance
-          .loadArticles()
-          .then((articles) => DatabaseHelper.instance.saveArticles(articles))
-          .then((_) => DatabaseHelper.instance.getArticles());
-    }
-    setState(() {
-      _setContent(articles);
-    });
+  @override
+  void dispose() {
+    _newsBloc.dispose();
+    super.dispose();
   }
 }

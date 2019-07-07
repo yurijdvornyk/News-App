@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:global_news_app/constants.dart';
-import 'package:global_news_app/data/settings_helper.dart';
 
-import 'app-bloc.dart';
+import 'blocs/app_bloc.dart';
 import 'view/home_page.dart';
 
 void main() => runApp(GlobalNewsApp());
@@ -13,10 +12,10 @@ class GlobalNewsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        initialData: APP_DEFAULT_THEME,
+        initialData: appDefaultTheme,
         stream: appBloc.themeStream,
         builder: (context, AsyncSnapshot<ThemeData> snapshot) {
-          var theme = snapshot.hasData ? snapshot.data : APP_DEFAULT_THEME;
+          var theme = snapshot.hasData ? snapshot.data : appDefaultTheme;
           return MaterialApp(
               theme: theme,
               home: HomePage());

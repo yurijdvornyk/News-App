@@ -2,7 +2,7 @@ import 'package:global_news_app/entity/article.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DatabaseHelper {
+class DatabaseProvider {
   static final _databaseName = "articles_database.db";
   static final _databaseVersion = 1;
   static final _tableName = 'articles';
@@ -20,8 +20,6 @@ class DatabaseHelper {
         isSaved INTEGER)
   ''';
 
-  static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
-
   Database _database;
 
   Future<Database> get database async {
@@ -30,8 +28,6 @@ class DatabaseHelper {
     }
     return _database;
   }
-
-  DatabaseHelper._privateConstructor();
 
   Future<Database> _initDatabase() async {
     return openDatabase(
@@ -44,7 +40,7 @@ class DatabaseHelper {
   }
 
   Future<void> saveArticle(Article article) async {
-    var db = await instance.database;
+    var db = await databaseProvider.database;
     var exists = await isArticleCached(article);
     if (!exists) {
       await db.insert(_tableName, article.toJson(),
@@ -68,18 +64,17 @@ class DatabaseHelper {
     return false;
   }
 
-  Future<bool> toggleSave(Article article) async {
-    var db = await instance.database;
-    article.isSaved = !article.isSaved;
+  Future<Article> updateArticle(Article article) async {
+    var db = await databaseProvider.database;
     await db.update(_tableName, article.toJson(),
         where: "id = ?",
         whereArgs: [article.id],
         conflictAlgorithm: ConflictAlgorithm.replace);
-    return article.isSaved;
+    return article;
   }
 
   Future<List<Article>> getArticles() async {
-    var db = await instance.database;
+    var db = await databaseProvider.database;
     return db
         .query(_tableName)
         .then((articlesRaw) => articlesRaw.map((v) => Article.fromJson(v)))
@@ -92,7 +87,7 @@ class DatabaseHelper {
   }
 
   Future<void> deleteArticle(int id) async {
-    var db = await instance.database;
+    var db = await databaseProvider.database;
     return await db.delete(_tableName, where: "id = ?", whereArgs: [id]);
   }
 
@@ -101,3 +96,5 @@ class DatabaseHelper {
         (articles) => articles.forEach((article) => deleteArticle(article.id)));
   }
 }
+
+final databaseProvider = DatabaseProvider();

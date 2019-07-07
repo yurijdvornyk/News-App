@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../app-bloc.dart';
+import '../blocs/app_bloc.dart';
 
 class SettingsHelper {
   static final SettingsHelper instance = SettingsHelper._privateConstructor();
