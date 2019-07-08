@@ -1,10 +1,7 @@
+import 'package:global_news_app/blocs/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../blocs/app_bloc.dart';
-
-class SettingsHelper {
-  static final SettingsHelper instance = SettingsHelper._privateConstructor();
-
+class SettingsRepository {
   static const KEY_USE_DARK_THEME = "use_dak_theme";
   static const KEY_COUNTRY = "country";
   static const KEY_CACHE_SIZE = "cache_size";
@@ -17,19 +14,13 @@ class SettingsHelper {
     KEY_USE_EXTERNAL_BROWSER: true
   };
 
-  SettingsHelper._privateConstructor();
-
   Future<bool> get useDarkTheme async => await SharedPreferences.getInstance()
       .then((preferences) => preferences.getBool(KEY_USE_DARK_THEME));
   
   Future<bool> shouldUseDarkTheme(bool shouldUse) async =>
       await SharedPreferences.getInstance()
           .then((preferences) => preferences.setBool(KEY_USE_DARK_THEME, shouldUse))
-          .then((value) { 
-            appBloc.changeTheme(shouldUse);
-            return true;
-          })
-          .then((success) => shouldUse);
+          .then((_) => shouldUse);
 
   Future<String> get country async => await SharedPreferences.getInstance()
       .then((preferences) => preferences.getString(KEY_COUNTRY));

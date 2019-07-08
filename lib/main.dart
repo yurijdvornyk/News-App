@@ -1,25 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:global_news_app/constants.dart';
 
-import 'blocs/app_bloc.dart';
+import 'blocs/settings_bloc.dart';
 import 'view/home_page.dart';
 
 void main() => runApp(GlobalNewsApp());
 
-class GlobalNewsApp extends StatelessWidget {
+class GlobalNewsApp extends StatefulWidget {
   // TODO: Add location service; set current country as default
+
+  @override
+  State<StatefulWidget> createState() {
+    return _GlobalNewsAppState();
+  }
+}
+
+class _GlobalNewsAppState extends State<GlobalNewsApp> {
+
+  final _settingsBloc = SettingsBloc();
+
+  @override
+  void initState() {
+    super.initState();
+    _settingsBloc.loadSettings();
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        initialData: appDefaultTheme,
-        stream: appBloc.themeStream,
-        builder: (context, AsyncSnapshot<ThemeData> snapshot) {
-          var theme = snapshot.hasData ? snapshot.data : appDefaultTheme;
+        initialData: false,
+        stream: _settingsBloc.useDarkThemeStream,
+        builder: (context, AsyncSnapshot<bool> snapshot) {
+          var theme = snapshot.hasData ? (snapshot.data ? appDarkTheme : appLightTheme) : appDefaultTheme;
           return MaterialApp(
               theme: theme,
               home: HomePage());
         });
+  }
+
+  @override
+  void dispose() {
+    _settingsBloc.dispose();
+    super.dispose();
   }
 }
 
