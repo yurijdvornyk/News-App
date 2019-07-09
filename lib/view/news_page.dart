@@ -61,8 +61,12 @@ class NewsPageState extends State<NewsPage> {
 
   Widget _createArticleTile(BuildContext context, Article item) {
     return ListTile(
-      title: Row(children: [Text(item.time), Text(" | "), Text(item.source)]),
-      subtitle: Text(item.title),
+      title: Padding(
+        padding: EdgeInsets.only(top: 8, bottom: 4),
+        child: Row(children: [Text(item.time), Text(" | "), Text(item.source)])),
+      subtitle: Padding(
+        padding: EdgeInsets.only(top: 4, bottom: 8),
+        child: Text(item.title)),
       trailing: GestureDetector(
           child: Icon(item.isSaved ? Icons.bookmark : Icons.bookmark_border),
           onTap: () {
