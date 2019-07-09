@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:global_news_app/blocs/article_bloc.dart';
 import 'package:global_news_app/blocs/news_bloc.dart';
 import 'package:global_news_app/entity/article.dart';
 import 'article_page.dart';
@@ -18,6 +17,7 @@ class NewsPage extends StatefulWidget {
 
 class NewsPageState extends State<NewsPage> {
   final _newsBloc = NewsBloc();
+
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -32,7 +32,7 @@ class NewsPageState extends State<NewsPage> {
     return Scaffold(
         body: StreamBuilder(
             initialData: null,
-            stream: _newsBloc.articlesStream,
+            stream: _newsBloc.newsStream,
             builder: (context, AsyncSnapshot<List<Article>> snapshot) {
               if (snapshot.hasData) {
                 return RefreshIndicator(
@@ -59,35 +59,23 @@ class NewsPageState extends State<NewsPage> {
 
   reload() => _newsBloc.loadNews(onlySaved: widget.showOnlySaved);
 
-  Widget _createArticleTile(context, item) {
-    if (item is Article) {
-      var firstRow =
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(item.time, style: TextStyle(fontWeight: FontWeight.bold)),
-        Text(item.source)
-      ]);
-
-      firstRow.children.add(GestureDetector(
-          child:
-              item.isSaved ? Icon(Icons.bookmark) : Icon(Icons.bookmark_border),
-          onTap: () => articleBloc.toggleSaveState(item)));
-
-      var secondRow =
-          Text(item.title, maxLines: 1, overflow: TextOverflow.ellipsis);
-
-      return ListTile(
-        title: firstRow,
-        subtitle: secondRow,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ArticlePage(article: item)),
-          );
-        },
-      );
-    } else if (item is String) {
-      return ListTile(title: Text(item, textAlign: TextAlign.center));
-    }
+  Widget _createArticleTile(BuildContext context, Article item) {
+    return ListTile(
+      title: Row(children: [Text(item.time), Text(" | "), Text(item.source)]),
+      subtitle: Text(item.title),
+      trailing: GestureDetector(
+          child: Icon(item.isSaved ? Icons.bookmark : Icons.bookmark_border),
+          onTap: () {
+            _newsBloc.toggleSaveState(item);
+            reload();
+          }), //=> _newsBloc.toggleSaveState(item)),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ArticlePage(article: item)),
+        );
+      },
+    );
   }
 
   @override

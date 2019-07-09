@@ -7,9 +7,16 @@ import 'package:global_news_app/resources/news_repository.dart';
 
 class NewsBloc implements BaseBloc {
   final _repository = NewsRepository();
-  final _newsFetcher = StreamController<List<Article>>();
+  final _newsController = StreamController<List<Article>>.broadcast();
+  final _articleController = StreamController<Article>.broadcast();
 
-  Stream<List<Article>> get articlesStream => _newsFetcher.stream;
+  Stream<List<Article>> get newsStream => _newsController.stream;
+  Stream<Article> get articleStream => _articleController.stream;
+
+  void toggleSaveState(Article article) async {
+    article.isSaved = !article.isSaved;
+    _articleController.sink.add(await databaseProvider.updateArticle(article));
+  }
 
   loadNews({onlySaved = false}) async {
     var articles = onlySaved
@@ -18,11 +25,12 @@ class NewsBloc implements BaseBloc {
             .loadArticles()
             .then((articles) => databaseProvider.saveArticles(articles))
             .then((_) => databaseProvider.getArticles());
-    _newsFetcher.sink.add(articles);
+    _newsController.sink.add(articles);
   }
 
   @override
   void dispose() {
-    _newsFetcher.close();
+    _newsController.close();
+    _articleController.close();
   }
 }
