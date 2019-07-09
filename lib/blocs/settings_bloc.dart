@@ -6,17 +6,17 @@ import 'package:global_news_app/resources/settings_repository.dart';
 class SettingsBloc implements BaseBloc {
   final _repository = SettingsRepository();
 
-  final _useDarkThemeController = StreamController<bool>();
-  get useDarkThemeStream => _useDarkThemeController.stream.asBroadcastStream();
+  final _useDarkThemeController = StreamController<bool>.broadcast();
+  get useDarkThemeStream => _useDarkThemeController.stream;
 
-  final _countryController = StreamController<String>();
-  get countryStream => _countryController.stream.asBroadcastStream();
+  final _countryController = StreamController<String>.broadcast();
+  get countryStream => _countryController.stream;
 
-  final _cacheSizeController = StreamController<int>();
-  get cacheSizeStream => _cacheSizeController.stream.asBroadcastStream();
+  final _cacheSizeController = StreamController<int>.broadcast();
+  get cacheSizeStream => _cacheSizeController.stream;
 
-  final _useExternalBrowserController = StreamController<bool>();
-  get useExternalBrowserStream => _useExternalBrowserController;
+  final _useExternalBrowserController = StreamController<bool>.broadcast();
+  get useExternalBrowserStream => _useExternalBrowserController.stream;
 
   useDarkTheme(bool use) {
     _repository
@@ -52,3 +52,5 @@ class SettingsBloc implements BaseBloc {
     _useExternalBrowserController.close();
   }
 }
+
+final settingsBloc = SettingsBloc();

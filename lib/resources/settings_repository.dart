@@ -1,4 +1,3 @@
-import 'package:global_news_app/blocs/settings_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsRepository {

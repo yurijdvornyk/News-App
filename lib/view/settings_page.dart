@@ -13,7 +13,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  final _settingsBloc = SettingsBloc();
   /* Settings:
     - Light/dark theme // TODO: SwitchListTile
     - Country
@@ -25,20 +24,20 @@ class _SettingsPageState extends State<SettingsPage> {
   List<Widget> get _content => [
         StreamBuilder(
             initialData: false,
-            stream: _settingsBloc.useDarkThemeStream,
+            stream: settingsBloc.useDarkThemeStream,
             builder: (context, AsyncSnapshot<bool> snapshot) {
               return ListTile(
                 leading: Icon(Icons.brightness_5),
                 title: Text("Use dark theme"),
                 trailing: Switch(
                   value: snapshot.hasData ? snapshot.data : false,
-                  onChanged: (value) => _settingsBloc.useDarkTheme(value),
+                  onChanged: (value) => settingsBloc.useDarkTheme(value),
                 ),
               );
             }),
         StreamBuilder(
             initialData: SUPPORTED_COUNTRIES[0],
-            stream: _settingsBloc.countryStream,
+            stream: settingsBloc.countryStream,
             builder: (context, AsyncSnapshot<String> snapshot) {
               return ListTile(
                   leading: Icon(Icons.map),
@@ -51,11 +50,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               child: Text(country)))
                           .toList(),
                       value: snapshot.hasData ? snapshot.data : "UK",
-                      onChanged: (value) => _settingsBloc.setCountry(value)));
+                      onChanged: (value) => settingsBloc.setCountry(value)));
             }),
         StreamBuilder(
             initialData: 20,
-            stream: _settingsBloc.cacheSizeStream,
+            stream: settingsBloc.cacheSizeStream,
             builder: (context, AsyncSnapshot<int> snapshot) {
               int number = snapshot.hasData ? snapshot.data : 20;
               return ListTile(
@@ -70,7 +69,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    _settingsBloc.loadSettings();
+    settingsBloc.loadSettings();
   }
 
   @override
@@ -90,14 +89,8 @@ class _SettingsPageState extends State<SettingsPage> {
           );
         }).then((int value) {
       if (value != null) {
-        _settingsBloc.cacheSize(value);
+        settingsBloc.cacheSize(value);
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _settingsBloc.dispose();
-    super.dispose();
   }
 }

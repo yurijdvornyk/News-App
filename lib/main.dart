@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:global_news_app/constants.dart';
-
 import 'blocs/settings_bloc.dart';
 import 'view/home_page.dart';
 
@@ -17,31 +16,25 @@ class GlobalNewsApp extends StatefulWidget {
 
 class _GlobalNewsAppState extends State<GlobalNewsApp> {
 
-  final _settingsBloc = SettingsBloc();
+  //final _settingsBloc = SettingsBloc();
 
   @override
   void initState() {
     super.initState();
-    _settingsBloc.loadSettings();
+    settingsBloc.loadSettings();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
         initialData: false,
-        stream: _settingsBloc.useDarkThemeStream,
+        stream: settingsBloc.useDarkThemeStream,
         builder: (context, AsyncSnapshot<bool> snapshot) {
           var theme = snapshot.hasData ? (snapshot.data ? appDarkTheme : appLightTheme) : appDefaultTheme;
           return MaterialApp(
               theme: theme,
               home: HomePage());
         });
-  }
-
-  @override
-  void dispose() {
-    _settingsBloc.dispose();
-    super.dispose();
   }
 }
 
@@ -55,4 +48,5 @@ Database: https://medium.com/@studymongolian/simple-sqflite-database-example-in-
 Dynamic themes: https://medium.com/@frmineoapps/flutter-how-to-change-the-apps-theme-dynamically-using-streams-77df0c7b0c16
 TODO: Bloc Pattern!!! https://medium.com/@frmineoapps/flutter-bloc-pattern-and-a-little-medical-app-992b189d5124
 BLOC: https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1
+About streams: https://medium.com/flutter-community/reactive-programming-streams-bloc-6f0d2bd2d248
 */
