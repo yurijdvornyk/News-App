@@ -49,4 +49,5 @@ Dynamic themes: https://medium.com/@frmineoapps/flutter-how-to-change-the-apps-t
 TODO: Bloc Pattern!!! https://medium.com/@frmineoapps/flutter-bloc-pattern-and-a-little-medical-app-992b189d5124
 BLOC: https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1
 About streams: https://medium.com/flutter-community/reactive-programming-streams-bloc-6f0d2bd2d248
+Layout guide: https://flutter.dev/docs/development/ui/layout
 */
