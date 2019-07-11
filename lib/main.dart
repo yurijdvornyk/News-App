@@ -6,8 +6,6 @@ import 'view/home_page.dart';
 void main() => runApp(GlobalNewsApp());
 
 class GlobalNewsApp extends StatefulWidget {
-  // TODO: Add location service; set current country as default
-
   @override
   State<StatefulWidget> createState() {
     return _GlobalNewsAppState();
@@ -15,9 +13,6 @@ class GlobalNewsApp extends StatefulWidget {
 }
 
 class _GlobalNewsAppState extends State<GlobalNewsApp> {
-
-  //final _settingsBloc = SettingsBloc();
-
   @override
   void initState() {
     super.initState();
@@ -30,10 +25,10 @@ class _GlobalNewsAppState extends State<GlobalNewsApp> {
         initialData: false,
         stream: settingsBloc.useDarkThemeStream,
         builder: (context, AsyncSnapshot<bool> snapshot) {
-          var theme = snapshot.hasData ? (snapshot.data ? appDarkTheme : appLightTheme) : appDefaultTheme;
-          return MaterialApp(
-              theme: theme,
-              home: HomePage());
+          var theme = snapshot.hasData
+              ? (snapshot.data ? appDarkTheme : appLightTheme)
+              : appDefaultTheme;
+          return MaterialApp(theme: theme, home: HomePage());
         });
   }
 }
