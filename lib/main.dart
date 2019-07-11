@@ -45,4 +45,5 @@ TODO: Bloc Pattern!!! https://medium.com/@frmineoapps/flutter-bloc-pattern-and-a
 BLOC: https://medium.com/flutterpub/architecting-your-flutter-project-bd04e144a8f1
 About streams: https://medium.com/flutter-community/reactive-programming-streams-bloc-6f0d2bd2d248
 Layout guide: https://flutter.dev/docs/development/ui/layout
+Platform-specific code: https://flutter.dev/docs/development/platform-integration/platform-channels
 */

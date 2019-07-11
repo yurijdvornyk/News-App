@@ -36,12 +36,17 @@ class SettingsBloc implements BaseBloc {
         .then((value) => _cacheSizeController.sink.add(value));
   }
 
+  useExternalBrowser(bool use) {
+    _repository
+        .shoulduseExternalBrowser(use)
+        .then((value) => _useExternalBrowserController.sink.add(value));
+  }
+
   loadSettings() {
     _repository.useDarkTheme
         .then((value) => _useDarkThemeController.sink.add(value));
     _repository.country.then((value) => _countryController.sink.add(value));
-    _repository.cacheSize
-        .then((value) => _cacheSizeController.sink.add(value));
+    _repository.cacheSize.then((value) => _cacheSizeController.sink.add(value));
   }
 
   @override

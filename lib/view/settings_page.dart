@@ -63,7 +63,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 trailing: Text(number.toString()),
                 onTap: () => _showDialog(number),
               );
-            })
+            }),
+        StreamBuilder(
+            initialData: true,
+            stream: settingsBloc.useExternalBrowserStream,
+            builder: (context, AsyncSnapshot<bool> snapshot) {
+              return ListTile(
+                leading: Icon(Icons.web),
+                title: Text("Open articles in external browser"),
+                trailing: Switch(
+                  value: snapshot.hasData ? snapshot.data : true,
+                  onChanged: (value) => settingsBloc.useExternalBrowser(value),
+                ),
+              );
+            }),
       ];
 
   @override
